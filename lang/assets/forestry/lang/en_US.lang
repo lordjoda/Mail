@@ -1,0 +1,220 @@
+for.chat.command.aliases=Aliases: %s
+for.chat.command.list=Available Sub-Commands:
+for.chat.command.permlevel=Permission Level: %s
+for.chat.command.noperms=You do not have permission to use this command.
+
+for.chat.command.forestry.help=Various commands for Forestry
+for.chat.command.forestry.format=Format: /%s <sub-command>
+
+for.chat.command.forestry.version.desc=- %s : Version information
+for.chat.command.forestry.version.help=Prints current version
+for.chat.command.forestry.version.format=Format: /%s
+
+for.chat.command.forestry.plugins.desc=- %s : List of Forestry Plugins
+for.chat.command.forestry.plugins.help=Lists all Forestry Plugins. Green are active, red disabled.
+for.chat.command.forestry.plugins.format=Format: /%s
+
+for.chat.command.forestry.plugins.info.desc=- %s : Information on a specific Plugin
+for.chat.command.forestry.plugins.info.help=Prints information on a specific Plugin
+for.chat.command.forestry.plugins.info.format=Format: /%s <plugin-name>
+
+for.chat.help=Type '%s' for help.
+for.chat.plugins.error=No information available for plugin %s.
+for.chat.version=Forestry %1$s for Minecraft %2$s (Latest: %3$s).
+
+for.gui.blank=Blank
+for.gui.access=Access
+for.gui.active=Active
+for.gui.addressee.player=Player
+for.gui.addressee.trader=Trader Station
+
+
+for.gui.mail.foreveryattached=for every attached
+for.gui.mail.from=From
+for.gui.mail.nametrader=Name your trade station
+for.gui.mail.nothing.to.trade=Trade station has nothing to trade.
+for.gui.mail.no.trader=No trade station of that name available.
+for.gui.mail.pleasesend=Please send
+for.gui.mail.order.attached=Please find your order attached.
+for.gui.mail.order.filled.one=1 order from %SENDER was filled.
+for.gui.mail.order.filled.multiple=%COUNT orders from %SENDER were filled.
+for.gui.mail.to=To
+for.gui.mail.receive=Receive
+for.gui.mail.send=Send
+
+for.hints.postage.desc=Sending letters costs stamps. To a base fee of 1n, every attachment adds another 1n of cost.
+for.hints.postage.tag=Pay the Ferryman
+
+for.item.crated.grammar=Crated %s
+for.item.crated.unknown=Crate with unknown content
+
+for.no=No
+
+
+for.trigger.hasMail=Has Mail
+for.trigger.hasWork=Has Work
+for.trigger.lowInput=Input
+for.trigger.lowPaper=Paper
+for.trigger.lowResources=Resources
+for.trigger.lowStamps=Stamps
+for.trigger.mailBuffer=Buffer
+
+for.yes=Yes
+
+item.for.letters.name=Letter
+
+
+item.for.stamps.1n.name=Stamp (1n)
+item.for.stamps.2n.name=Stamp (2n)
+item.for.stamps.5n.name=Stamp (5n)
+item.for.stamps.10n.name=Stamp (10n)
+item.for.stamps.20n.name=Stamp (20n)
+item.for.stamps.50n.name=Stamp (50n)
+item.for.stamps.100n.name=Stamp (100n)
+item.for.stamps.name=Stamp
+
+itemGroup.mail=Mail
+
+tile.for.mailbox.name=Mailbox
+tile.for.trade_station.name=Trade Station
+tile.for.stamp_collector.name=Stamp Collector
+
+
+################
+# ERRORS
+################
+
+
+# TRADE STATION
+for.errors.no_stamps.desc=Need Stamps
+for.errors.no_stamps.help=The trade station requires more stamps to pay postage.
+for.errors.no_paper.desc=Need Paper
+for.errors.no_paper.help=The trade station requires more paper to send letters.
+for.errors.no_supplies.desc=Need Supplies
+for.errors.no_supplies.help=The trade station requires more supplies to send.
+for.errors.no_trade.desc=No Trade Set
+for.errors.no_trade.help=The trade station requires items to Send and Receive.
+
+# TRADE STATION NAMING
+for.errors.not_alpha_numeric.desc=Invalid Name
+for.errors.not_alpha_numeric.help=A Trade Station name must consist of letters and numbers only.
+for.errors.not_unique.desc=Not Unique
+for.errors.not_unique.help=Trade Station names must be unique and this name is already taken.
+
+# LETTERS
+for.errors.no_recipient.desc=No Recipient
+for.errors.no_recipient.help=You need to address your letter to a recipient to send it.
+for.errors.not_postpaid.desc=Stamps Needed
+for.errors.not_postpaid.help=Apply more stamps to pay the postal service.
+
+
+####################
+# MAIL
+####################
+
+for.chat.mail.already_mailed=Cannot resend letter.
+
+for.chat.command.forestry.mail.desc=- %s : Mail System Commands
+for.chat.command.forestry.mail.help=Various commands related to the mail system
+for.chat.command.forestry.mail.format=Format: /%s <sub-command>
+
+for.chat.command.forestry.mail.trades.desc=- %s : A list of all trade stations.
+for.chat.command.forestry.mail.trades.help=Lists all trade stations and their available trades.
+for.chat.command.forestry.mail.trades.format=Format: /%s
+
+for.chat.command.forestry.mail.virtualize.desc=- %s : Toggle virtual mode on a specified trade station.
+for.chat.command.forestry.mail.virtualize.help=Toggles virtual mode on a specified trade station. This mode does not consume items.
+for.chat.command.forestry.mail.virtualize.format=Format: /%s <trade-station-name>
+for.chat.command.forestry.mail.virtualize.no_tradestation=No trade station by the name of '%s' was found.
+for.chat.command.forestry.mail.virtualize.set=Set virtualization for '%s' to %s.
+
+for.chat.mail.insufficient.buffer=Trade station is full.
+for.chat.mail.insufficient.offer=Trade station demands more.
+for.chat.mail.insufficient.paper=Trade station ran out of paper.
+for.chat.mail.insufficient.stamps=Trade station ran out of stamps.
+for.chat.mail.insufficient.trade.good=Trade station has run out of supplies.
+for.chat.mail.mailbox.full=Recipient's mailbox is full.
+for.chat.mail.not.mailable=Letter is not sendable.
+for.chat.mail.not.postpaid=Letter is not sufficiently stamped.
+for.chat.mail.no.mailbox=Recipient has no mailbox.
+for.chat.mail.ok=Trade is available.
+for.chat.mail.response.not.mailable.format=Trade station cannot send the response letter. %s
+for.chat.mail.wrongstacksize=Can only write one letter at a time.
+
+for.gui.mail.address.copy=Use
+for.gui.mail.catalogue.close=Close
+for.gui.mail.catalogue.trade=Trade
+for.gui.mail.filter.all=All
+for.gui.mail.filter.offline=Offline
+for.gui.mail.filter.online=Online
+for.gui.mail.notrades=No trades available.
+for.gui.mail.tradefor=for
+for.gui.mail.willtrade=%s will trade
+
+item.for.catalogue.name=Catalogue
+item.for.catalogue.tooltip=Lists all available Trade Station trades.
+
+
+####################
+# PLUGINS
+####################
+for.plugin.core.description=Core mechanics for Forestry. Required by all other plugins.
+for.plugin.mail.description=Adds Forestry's mail and trade system.
+
+
+####################
+# CONFIG FILES
+####################
+
+for.config.performance=Performance
+for.config.performance.particleFX=Particle Effects
+for.config.performance.particleFX.comment=Enables particle effects. Note that Forestry respects Minecraft's reduced particle video settings.
+for.config.performance.backpacks.resupply=Backpack Resupply
+for.config.performance.backpacks.resupply.comment=Enable backpack resupply. You may want to set this to false on busy servers.
+
+
+for.config.crafting=Crafting
+for.config.crafting.bronze=Craft Bronze
+for.config.crafting.bronze.comment=Enables the crafting recipe for bronze.
+for.config.crafting.stamps.enabled=Craft Stamps
+for.config.crafting.stamps.enabled.comment=Enables the crafting recipe for stamps. Disable to use stamps as a currency.
+for.config.crafting.stamps.disabled=Disabled Stamps
+for.config.crafting.stamps.disabled.comment=Disables the crafting recipe for certain stamps.
+
+for.config.tweaks=Tweaks
+
+for.config.tweaks.gui.mail.alert.enabled=Mail Alert
+for.config.tweaks.gui.mail.alert.enabled.comment=Enables the new mail alert box.
+for.config.tweaks.gui.mail.alert.xPosition=Horizontal Position
+for.config.tweaks.gui.mail.alert.xPosition.comment=Horizontal Position of the mail alert box on the screen.
+for.config.tweaks.gui.mail.alert.yPosition=Vertical Position
+for.config.tweaks.gui.mail.alert.yPosition.comment=Vertical Position of the mail alert box on the screen.
+
+for.config.tweaks.gui.tabs.hints=Hints
+for.config.tweaks.gui.tabs.hints.comment=Enables the hints tab on machine and engine guis.
+for.config.tweaks.gui.tabs.speed=Tab Speed
+for.config.tweaks.gui.tabs.speed.comment=Set the speed at which the gui side tabs open and close.
+for.config.tweaks.gui.tabs.energy=Energy Tab
+for.config.tweaks.gui.tabs.energy.comment=Display the energy statistics tab on energy consumers.
+
+
+for.config.tweaks.permissions=Permissions
+for.config.tweaks.permissions.comment=Enables access restrictions on forestry machines.
+for.config.tweaks.version.check=Version Check
+for.config.tweaks.version.check.comment=Enables update and version check notice.
+
+
+
+
+for.config.debug.enabled=Debug Mode
+for.config.debug.enabled.comment=Enable Debug mode (only useful to developers).
+
+
+####################
+# JEI Descriptions
+####################
+
+for.jei.description.mailbox=Allows players to send letters to trade stations and other players. Opening any mailbox will show the player their own mail.
+for.jei.description.trade_station=An automatic mailbox that lets players set up a trading deal.
+for.jei.description.stamp_collector=Creative-only. Collects all the stamps used by mailing letters. Useful for servers with a stamp economy.
+
