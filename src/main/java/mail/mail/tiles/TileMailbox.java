@@ -18,6 +18,7 @@ import mail.api.mail.PostManager;
 import mail.core.inventory.InventoryAdapter;
 import mail.core.tiles.TileBase;
 import mail.mail.EnumDeliveryState;
+import mail.mail.IPOBox;
 import mail.mail.POBoxSQL;
 import mail.mail.gui.ContainerMailbox;
 import mail.mail.gui.GuiMailbox;
@@ -30,6 +31,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.sql.SQLException;
 
 public class TileMailbox extends TileBase {
 
@@ -53,6 +56,17 @@ public class TileMailbox extends TileBase {
                 heldItem.shrink(1);
             }
         } else {
+
+            IMailAddress address = PostManager.postRegistry.getMailAddress(player.getGameProfile());
+
+            IPOBox poBox = PostManager.postRegistry.getPOBox(world, address);
+            if(poBox != null&& poBox instanceof POBoxSQL){
+                try {
+                    ((POBoxSQL) poBox).load();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
             super.openGui(player, heldItem);
         }
     }

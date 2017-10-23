@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 
 import mail.core.gui.ContainerTile;
 import mail.core.gui.slots.SlotOutput;
+import mail.core.inventory.watchers.ISlotChangeWatcher;
 import mail.core.utils.NetworkUtil;
 import mail.core.utils.SlotUtil;
 import mail.mail.IPOBox;
@@ -27,41 +28,62 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class ContainerMailbox extends ContainerTile<TileMailbox> {
+import java.sql.SQLException;
 
-	public static final short SLOT_LETTERS = 0;
-	public static final short SLOT_LETTERS_COUNT = 7 * 12;
-	@Nullable
-	private final IPOBox mailInventory;
+public class ContainerMailbox extends ContainerTile<TileMailbox> implements ISlotChangeWatcher {
 
-	public ContainerMailbox(InventoryPlayer playerInventory, TileMailbox tile) {
-		super(tile, playerInventory, 35, 145);
-		IInventory inventory = tile.getOrCreateMailInventory(playerInventory.player.world, playerInventory.player.getGameProfile());
+    public static final short SLOT_LETTERS = 0;
+    public static final short SLOT_LETTERS_COUNT = 7 * 12;
+    @Nullable
+    private final IPOBox mailInventory;
 
-		if (inventory instanceof POBoxSQL) {
-			this.mailInventory = (IPOBox) inventory;
-		} else {
-			this.mailInventory = null;
-		}
+    public ContainerMailbox(InventoryPlayer playerInventory, TileMailbox tile) {
+        super(tile, playerInventory, 35, 145);
+        IInventory inventory = tile.getOrCreateMailInventory(playerInventory.player.world, playerInventory.player.getGameProfile());
 
-		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 12; j++) {
-				addSlotToContainer(new SlotOutput(inventory, j + i * 9, 8 + j * 18, 8 + i * 18));
-			}
-		}
-	}
+        if (inventory instanceof IPOBox) {
+            this.mailInventory = (IPOBox) inventory;
+        } else {
+            this.mailInventory = null;
+        }
 
-	@Override
-	public ItemStack slotClick(int slotId, int dragType_or_button, ClickType clickTypeIn, EntityPlayer player) {
-		ItemStack stack = super.slotClick(slotId, dragType_or_button, clickTypeIn, player);
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 12; j++) {
+                SlotOutput slotOutput = new SlotOutput(inventory, j + i * 9, 8 + j * 18, 8 + i * 18);
+                slotOutput.setChangeWatcher(this);
+                addSlotToContainer(slotOutput);
+            }
+        }
+    }
 
-		if (SlotUtil.isSlotInRange(slotId, SLOT_LETTERS, SLOT_LETTERS_COUNT)) {
-			if (!player.world.isRemote && mailInventory != null) {
-				POBoxInfo info = mailInventory.getPOBoxInfo();
-				NetworkUtil.sendToPlayer(new PacketPOBoxInfoResponse(info), player);
-			}
-		}
+    @Override
+    public ItemStack slotClick(int slotId, int dragType_or_button, ClickType clickTypeIn, EntityPlayer player) {
+        System.out.println("klick");
+        update();
+        ItemStack stack = super.slotClick(slotId, dragType_or_button, clickTypeIn, player);
 
-		return stack;
-	}
+        if (SlotUtil.isSlotInRange(slotId, SLOT_LETTERS, SLOT_LETTERS_COUNT)) {
+            if (!player.world.isRemote && mailInventory != null) {
+                POBoxInfo info = mailInventory.getPOBoxInfo();
+                NetworkUtil.sendToPlayer(new PacketPOBoxInfoResponse(info), player);
+            }
+        }
+
+        return stack;
+    }
+
+    @Override
+    public void onSlotChanged(IInventory inventory, int slot) {
+        System.out.println("slot changed");
+    }
+
+    private void update() {
+        if (mailInventory instanceof POBoxSQL) {
+            try {
+                ((POBoxSQL) mailInventory).load();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

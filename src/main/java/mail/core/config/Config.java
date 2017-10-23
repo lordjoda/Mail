@@ -132,7 +132,8 @@ public class Config {
 
 			enableParticleFX = configCommon.getBooleanLocalized("performance", "particleFX", enableParticleFX);
 		}
-		else {
+//		else
+			{
 			SQLMode = configCommon.getEnumLocalized("mail", "mode", SQLMode, MailMode.values());
 			serverAddress = configCommon.getStringLocalized("mail", "address", serverAddress);
 			serverPort = configCommon.getIntLocalized("mail", "port", serverPort, 0, Short.MAX_VALUE * 2 + 1);

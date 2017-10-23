@@ -131,9 +131,9 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
 
     @Override
     protected void setupStatements() throws SQLException {
-        String loadQuery = "SELECT Name, UUID,  Virtual, Invalid , Inventory FROM " + tableName + " WHERE ID = '" + key + "';";
+        String loadQuery = "SELECT Name, `UUID`, `Virtual`, `Invalid` , `Inventory` FROM " + tableName + " WHERE ID = '" + key + "';";
         loadStatement = connection.prepareStatement(loadQuery);
-        String saveQuery = "REPLACE into " + tableName + " (ID, Address, Name, UUID, Virtual, Invalid, Inventory) VALUES " +
+        String saveQuery = "REPLACE into " + tableName + " (`ID`, `Address`, `Name`, `UUID`, `Virtual`, `Invalid`, `Inventory`) VALUES " +
                 "(?,?,?,?,?,?,?);";
         saveStatement = connection.prepareStatement(saveQuery);
 
