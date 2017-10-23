@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "mail:items/stamps.0",
+		"layer1": "mail:items/stamps.1"
+    }
+}

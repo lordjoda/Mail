@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "mail:blocks/mailbox.2",
+        "down": "mail:blocks/mailbox.0",
+        "up": "mail:blocks/mailbox.1",
+        "north": "mail:blocks/mailbox.2",
+        "east": "mail:blocks/mailbox.2",
+        "south": "mail:blocks/mailbox.2",
+        "west": "mail:blocks/mailbox.2"
+    }
+}

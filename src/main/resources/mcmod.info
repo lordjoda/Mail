@@ -1,0 +1,18 @@
+[
+{
+  "modid": "mail",
+  "name": "Mail",
+  "description": "Standalone version of the Forestry Mail system. SQL compatible for trade across multiple servers ",
+  "credits": "mistaqur, Binnie, CovertJaguar, MysteriousAges, Nirek, Nedelosk, Lord Joda",
+  "logoFile": "/assets/forestry/logo.png",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://forestry.sengir.net/",
+  "updateUrl": "http://minecraft.curseforge.com/projects/forestry",
+  "authorList": [ "SirSengir", "mezz", "Lord Joda" ],
+  "screenshots": [ "/gfx/forestry/screenshots/screen1.jpg", "/gfx/forestry/screenshots/screen2.jpg" ],
+  "dependencies": [
+     "mod_MinecraftForge"
+  ]
+}
+]

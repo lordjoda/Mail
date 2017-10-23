@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "mail:blocks/philatelist.2",
+        "down": "mail:blocks/philatelist.0",
+        "up": "mail:blocks/philatelist.1",
+        "north": "mail:blocks/philatelist.3",
+        "east": "mail:blocks/philatelist.2",
+        "south": "mail:blocks/philatelist.2",
+        "west": "mail:blocks/philatelist.2"
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "mail:stamp_collector" },
+		"facing=east": { "model": "mail:stamp_collector", "y": 90 },
+		"facing=south": { "model": "mail:stamp_collector", "y": 180 },
+		"facing=west": { "model": "mail:stamp_collector", "y": -90 }
+	}
+}
