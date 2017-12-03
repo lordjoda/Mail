@@ -148,5 +148,8 @@ public class InventoryPlain implements IInventory, INbtWritable, INbtReadable {
 
 	@Override
 	public void clear() {
+		for (int i = 0; i < contents.size(); i++) {
+			contents.set(i,ItemStack.EMPTY);
+		}
 	}
 }

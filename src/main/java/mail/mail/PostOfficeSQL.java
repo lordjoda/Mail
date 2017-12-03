@@ -82,7 +82,6 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
     }
 
     public void save() throws SQLException {
-        System.out.println("saving Post office");
         for (int i = 0; i < collectedPostage.length; i++) {
             saveStatement.setInt(i + 1, collectedPostage[i]);
         }

@@ -70,7 +70,6 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
 
     @Override
     public void load() throws SQLException {
-        System.out.println("loading trade Station");
         isInvalid = true;
         ResultSet resultSet = loadStatement.executeQuery();
 
@@ -94,7 +93,6 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
     }
 
     public void delete() {
-        System.out.println("delete trade station");
         try {
             deleteQuery.execute();
         } catch (SQLException e) {
@@ -103,7 +101,6 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
     }
     @Override
     public void save() throws SQLException {
-        System.out.println("saving Trade Station");
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         inventory.writeToNBT(nbttagcompound);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -153,11 +150,7 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
     @Override
     public void readFromNBT(NBTTagCompound nbttagcompound) {
 
-        //this should only be called on the server side. possibly if something changes? => save to sql?
-        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-            System.out.println("CLIENT");
-        }
-        //TODO is this called from client side?
+
         if (nbttagcompound.hasKey("owner")) {
             owner = PlayerUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("owner"));
         }

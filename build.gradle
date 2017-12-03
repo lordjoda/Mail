@@ -123,7 +123,7 @@ task apiJar(type: Jar) {
 	// Gradle should be able to pull them from the -sources jar.
 	from sourceSets.main.allSource
 	from sourceSets.main.output
-	include 'forestry/api/**'
+	include 'mail/api/**'
 	classifier = 'api'
 }
 

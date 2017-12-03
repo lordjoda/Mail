@@ -225,5 +225,6 @@ public class InventoryAdapter implements IInventoryAdapter, IStreamable {
 
 	@Override
 	public void clear() {
+		inventory.clear();
 	}
 }

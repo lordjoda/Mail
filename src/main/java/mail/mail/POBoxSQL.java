@@ -70,13 +70,12 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
 
     @Override
     public void load() throws SQLException {
-        System.out.println("load PoBox");
         ResultSet resultSet = loadStatement.executeQuery();
         if (resultSet.next()) {
 
             try {
-
-                this.address = new MailAddress(readFormStatement(resultSet, "Inventory"));
+                letters.clear();
+                this.address = new MailAddress(readFormStatement(resultSet, "Address"));
                 this.letters.readFromNBT(readFormStatement(resultSet, "Inventory"));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -91,7 +90,6 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
     @Override
     public void save() throws SQLException {
 
-        System.out.println("saving POBox");
         saveStatement.setString(1, key);
         try {
             writeToStatement(address, saveStatement, 2);

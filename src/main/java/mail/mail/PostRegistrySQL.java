@@ -92,11 +92,12 @@ public class PostRegistrySQL implements IPostRegistry {
         POBoxSQL pobox = null;
         try {
             pobox = new POBoxSQL(connection, address,world);
+            cachedPOBoxes.put(address, pobox);
         } catch (SQLException e) {
             Log.error(e.getLocalizedMessage());
         }
 
-        cachedPOBoxes.put(address, pobox);
+
 
         return pobox;
     }
@@ -115,6 +116,7 @@ public class PostRegistrySQL implements IPostRegistry {
     public void clearTradeStations() {
         cachedTradeStations.clear();
     }
+
 
     public IPOBox getOrCreatePOBox(World world, IMailAddress address) {
 

@@ -58,7 +58,6 @@ public class ContainerMailbox extends ContainerTile<TileMailbox> implements ISlo
 
     @Override
     public ItemStack slotClick(int slotId, int dragType_or_button, ClickType clickTypeIn, EntityPlayer player) {
-        System.out.println("klick");
         update();
         ItemStack stack = super.slotClick(slotId, dragType_or_button, clickTypeIn, player);
 
@@ -73,8 +72,7 @@ public class ContainerMailbox extends ContainerTile<TileMailbox> implements ISlo
     }
 
     @Override
-    public void onSlotChanged(IInventory inventory, int slot) {
-        System.out.println("slot changed");
+    public void onSlotChanged(IInventory inventory, int slot){
     }
 
     private void update() {

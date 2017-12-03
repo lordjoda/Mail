@@ -62,7 +62,9 @@ public interface IPostRegistry {
 
 	/* PO BOXES */
 	boolean isValidPOBox(World world, IMailAddress address);
+	@Nullable
 	IPOBox getOrCreatePOBox(World world, IMailAddress address) ;
+	@Nullable
 	IPOBox getPOBox(World world, IMailAddress address) ;
 
 	void clearPostOffice();

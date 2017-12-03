@@ -50,9 +50,8 @@ public class ConnectionMySQL {
             Log.error("Connection failed");
             Log.error(e.getLocalizedMessage());
             e.printStackTrace();
-            throw new RuntimeException("bla");
 
-//            return null;
+            return null;
         }
 
     }
