@@ -62,6 +62,7 @@ public class PostRegistrySQL implements IPostRegistry {
                         }
                     } catch (SQLException e) {
 
+                        Log.error(e.getLocalizedMessage(),e);
 
                     }
                 });
@@ -94,7 +95,7 @@ public class PostRegistrySQL implements IPostRegistry {
             pobox = new POBoxSQL(connection, address,world);
             cachedPOBoxes.put(address, pobox);
         } catch (SQLException e) {
-            Log.error(e.getLocalizedMessage());
+            Log.error(e.getLocalizedMessage(),e);
         }
 
 
@@ -131,9 +132,8 @@ public class PostRegistrySQL implements IPostRegistry {
                     NetworkUtil.sendToPlayer(new PacketPOBoxInfoResponse(pobox.getPOBoxInfo()), player);
                 }
             } catch (SQLException e) {
-                Log.error(e.getLocalizedMessage());
+                Log.error(e.getLocalizedMessage(),e);
 
-                e.printStackTrace();
             }
         }
 
@@ -196,8 +196,7 @@ public class PostRegistrySQL implements IPostRegistry {
                 cachedTradeStations.put(address, trade);
                 getPostOffice(world).registerTradeStation(trade);
             } catch (SQLException e) {
-                Log.error(e.getMessage());
-                e.printStackTrace();
+                Log.error(e.getLocalizedMessage(),e);
             }
         }
 
@@ -229,7 +228,7 @@ public class PostRegistrySQL implements IPostRegistry {
         try {
             office = new PostOfficeSQL(connection);
         } catch (SQLException e) {
-            Log.error(e.getLocalizedMessage());
+            Log.error(e.getLocalizedMessage(),e);
         }
 //            world.setData(PostOffice.SAVE_NAME, office);
 
