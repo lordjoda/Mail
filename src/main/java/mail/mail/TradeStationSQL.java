@@ -64,8 +64,14 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
 
     public TradeStationSQL(Connection connection, IMailAddress address) throws SQLException {
         super(TABLE_NAME_TRADE_STATION, SAVE_NAME + address, connection);
-       this.address = address;
-        load();
+        this.address = address;
+
+        try {
+            load();
+        } catch (SQLException e) {
+            Log.warning("Load Failed. Reconnect?", e);
+            load();
+        }
     }
 
     @Override
@@ -87,8 +93,8 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
                 e.printStackTrace();
             }
 
-        }else {
-            //??
+        } else {
+            Log.warning("Else Block reached Load TradeStation");
         }
     }
 
@@ -96,9 +102,15 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
         try {
             deleteQuery.execute();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Log.warning("Delete Failed. Reconnect?", e);
+            try {
+                deleteQuery.execute();
+            } catch (SQLException e1) {
+                Log.warning(e1.getLocalizedMessage(), e1);
+            }
         }
     }
+
     @Override
     public void save() throws SQLException {
         NBTTagCompound nbttagcompound = new NBTTagCompound();
@@ -107,7 +119,7 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
         try {
             int i = 1;
             saveStatement.setString(i++, key);
-            writeToStatement(address,saveStatement,i++);
+            writeToStatement(address, saveStatement, i++);
             saveStatement.setString(i++, owner.getName());
             saveStatement.setString(i++, owner.getId().toString());
             saveStatement.setBoolean(i++, isVirtual);
@@ -212,7 +224,14 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
         try {
             save();
         } catch (SQLException e) {
-            Log.error(e.getLocalizedMessage());
+            try {
+                Log.warning("Save Failed. Reconnect?", e);
+                save();
+            } catch (SQLException e1) {
+
+
+                Log.error(e1.getLocalizedMessage(), e1);
+            }
         }
     }
 
@@ -261,7 +280,12 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
         try {
             load();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Log.warning("Load Failed. Reconnect?", e);
+            try {
+                load();
+            } catch (SQLException e1) {
+                Log.error(e1.getLocalizedMessage(), e1);
+            }
         }
         boolean sendOwnerNotice = doLodge && owner != null;
 
@@ -649,7 +673,7 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
         return surplus;
     }
 
-	/* IINVENTORY */
+    /* IINVENTORY */
 
     @Override
     public boolean isEmpty() {
@@ -663,7 +687,13 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
         try {
             save();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Log.warning("Save Failed. Reconnect?",e);
+            try {
+                save();
+            } catch (SQLException e1) {
+                Log.error(e1.getLocalizedMessage(),e1);
+            }
+
         }
     }
 

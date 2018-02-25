@@ -55,7 +55,13 @@ public class PostRegistrySQL implements IPostRegistry {
                 //update stuff
                 cachedPOBoxes.forEach((iMailAddress, poBoxSQL) -> {
                     try {
-                        poBoxSQL.load();
+                        try {
+                            poBoxSQL.load();
+                        }
+                        catch (SQLException e){
+                            Log.warning("Load Failed. Reconnect?",e);
+                            poBoxSQL.load();
+                        }
                         EntityPlayer player = PlayerUtil.getPlayer(poBoxSQL.getWorld(), iMailAddress.getPlayerProfile());
                         if (player != null) {
                             NetworkUtil.sendToPlayer(new PacketPOBoxInfoResponse(poBoxSQL.getPOBoxInfo()), player);

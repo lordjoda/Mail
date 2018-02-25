@@ -17,6 +17,7 @@ import mail.api.mail.IMailAddress;
 import mail.api.mail.PostManager;
 import mail.core.inventory.InventoryAdapter;
 import mail.core.utils.InventoryUtil;
+import mail.core.utils.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,7 +51,12 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
         letters = new InventoryAdapter(SLOT_SIZE, "Letters").disableAutomation();
 
         this.address = address;
-        load();
+        try {
+            load();
+        } catch (SQLException e) {
+            Log.warning("Load Failed. Reconnect?", e);
+            load();
+        }
     }
 
     public World getWorld() {
@@ -78,11 +84,13 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
                 this.address = new MailAddress(readFormStatement(resultSet, "Address"));
                 this.letters.readFromNBT(readFormStatement(resultSet, "Inventory"));
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.error(e.getLocalizedMessage(),e);
+
             }
 
-        }else {
-        //??
+        } else {
+            Log.warning("Else Block Reached");
+            //??
         }
         resultSet.close();
     }
@@ -127,7 +135,12 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
         try {
             load();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Log.warning("Save Failed. Reconnect?",e);
+            try {
+                load();
+            } catch (SQLException e1) {
+                Log.error(e1.getLocalizedMessage(),e1);
+            }
         }
         // Mark letter as processed
         letter.setProcessed(true);
@@ -164,7 +177,7 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
         return new POBoxInfo(playerLetters, tradeLetters);
     }
 
-	/* IINVENTORY */
+    /* IINVENTORY */
 
     @Override
     public boolean isEmpty() {
@@ -178,7 +191,13 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
         try {
             save();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Log.warning("Save Failed. Reconnect?",e);
+            try {
+                save();
+            } catch (SQLException e1) {
+                Log.error(e1.getLocalizedMessage(),e1);
+            }
+
         }
     }
 

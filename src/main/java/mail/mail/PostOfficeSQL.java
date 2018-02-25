@@ -37,8 +37,18 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
     // CONSTRUCTORS
     public PostOfficeSQL(Connection connection) throws SQLException {
         super("PostOffice", SAVE_NAME, connection);
-        load();
-        save();
+        try {
+            load();
+        } catch (SQLException e) {
+            Log.warning("Load Failed. Reconnect?", e);
+            load();
+        }
+        try {
+            save();
+        } catch (SQLException e) {
+            Log.warning("Save Failed. Reconnect?", e);
+            save();
+        }
     }
 
     @SuppressWarnings("unused")
@@ -105,7 +115,7 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
 //        return nbttagcompound;
 //    }
 
-	/* TRADE STATION MANAGMENT */
+    /* TRADE STATION MANAGMENT */
 
     @Override
     public LinkedHashMap<IMailAddress, ITradeStation> getActiveTradeStations(World world) {
@@ -117,7 +127,15 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
     private void refreshActiveTradeStations(World world) {
         activeTradeStations = new LinkedHashMap<>();
         try {
-            ResultSet resultSet = getTradeStationQuery.executeQuery();
+
+
+            ResultSet resultSet;
+            try {
+                resultSet = getTradeStationQuery.executeQuery();
+            } catch (SQLException e) {
+                Log.warning("ExecuteFailed. Reconnect?", e);
+                resultSet = getTradeStationQuery.executeQuery();
+            }
             while (resultSet.next()) {
 
                 MailAddress address = new MailAddress(SQLSavedData.readFormStatement(resultSet, "Address"));
@@ -131,28 +149,6 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
         } catch (IOException | SQLException e) {
             Log.error(e.getLocalizedMessage());
         }
-
-//        File worldSave = world.getSaveHandler().getMapFileFromName("dummy");
-//        File file = worldSave.getParentFile();
-//        if (!file.exists() || !file.isDirectory()) {
-//            return;
-//        }
-//
-//        String[] list = file.list();
-//        if (list == null) {
-//            return;
-//        }
-//
-//        for (String str : list) {
-//            if (!str.startsWith(TradeStationSQL.SAVE_NAME)) {
-//                continue;
-//            }
-//            if (!str.endsWith(".dat")) {
-//                continue;
-//            }
-//
-//
-//        }
     }
 
     @Override
@@ -230,7 +226,13 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
         try {
             save();
         } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                Log.warning("Save Failed. Reconnect?", e);
+                save();
+            } catch (SQLException e1) {
+                Log.error(e1.getLocalizedMessage(), e1);
+            }
+
         }
         //    markDirty();
         return EnumDeliveryState.OK;

@@ -1,6 +1,7 @@
 package mail.mail;
 
 import mail.api.core.INbtWritable;
+import mail.core.utils.Log;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.terraingen.OreGenEvent;
@@ -30,7 +31,13 @@ public abstract class SQLSavedData {
         this.tableName = tableName;
         this.key = key;
         this.connection = connection;
-        setupStatements();
+        try {
+            setupStatements();
+        } catch (SQLException e) {
+            Log.warning("Setup failed. Reconnect?", e);
+            setupStatements();
+        }
+
         this.load = load;
 
     }
@@ -46,11 +53,16 @@ public abstract class SQLSavedData {
         writable.writeToNBT(nbt);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         CompressedStreamTools.writeCompressed(nbt, outputStream);
+
         statement.setBinaryStream(position, new ByteArrayInputStream(outputStream.toByteArray()));
+
     }
 
     public static NBTTagCompound readFormStatement(ResultSet rs, String columnName) throws IOException, SQLException {
-        InputStream binaryStream = rs.getBinaryStream(columnName);
+        InputStream binaryStream;
+
+        binaryStream = rs.getBinaryStream(columnName);
+
         return CompressedStreamTools.readCompressed(binaryStream);
     }
 
