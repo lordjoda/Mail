@@ -4,10 +4,8 @@ import mail.api.core.INbtWritable;
 import mail.core.utils.Log;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.event.terraingen.OreGenEvent;
 
 import java.io.*;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,20 +15,18 @@ import java.sql.SQLException;
  */
 public abstract class SQLSavedData {
 
-    Connection connection;
     protected final String tableName;
     protected final String key;
     protected final boolean load;
 
-    public SQLSavedData(String tableName, String key, Connection connection) throws SQLException {
-        this(tableName, key, connection, true);
+    public SQLSavedData(String tableName, String key) throws SQLException {
+        this(tableName, key, true);
     }
 
-    public SQLSavedData(String tableName, String key, Connection connection, boolean load) throws SQLException {
+    public SQLSavedData(String tableName, String key, boolean load) throws SQLException {
 
         this.tableName = tableName;
         this.key = key;
-        this.connection = connection;
         try {
             setupStatements();
         } catch (SQLException e) {
@@ -39,7 +35,7 @@ public abstract class SQLSavedData {
         }
 
         this.load = load;
-
+        ConnectionHandler.addListener(this);
     }
 
     public abstract void load() throws SQLException;
@@ -64,6 +60,13 @@ public abstract class SQLSavedData {
         binaryStream = rs.getBinaryStream(columnName);
 
         return CompressedStreamTools.readCompressed(binaryStream);
+    }
+
+    /**
+     * this shall be called if the connection was closed and has to be reloaded
+     */
+    public void reloadStatements() {
+
     }
 
 

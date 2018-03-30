@@ -11,7 +11,7 @@
 package mail.core.utils;
 
 import com.google.common.base.Preconditions;
-import mail.BungeeMail;
+import mail.Mail;
 import mail.core.network.IForestryPacketClient;
 import mail.core.network.IForestryPacketServer;
 import net.minecraft.client.Minecraft;
@@ -55,7 +55,7 @@ public class NetworkUtil {
 		}
 
 		EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-		BungeeMail.getPacketHandler().sendPacket(packet.getPacket(), player);
+		Mail.getPacketHandler().sendPacket(packet.getPacket(), player);
 	}
 
 	public static void inventoryChangeNotify(EntityPlayer player) {

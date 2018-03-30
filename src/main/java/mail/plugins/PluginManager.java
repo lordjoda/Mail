@@ -23,7 +23,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import mail.BungeeMail;
+import mail.Mail;
 import mail.api.core.MailAPI;
 import mail.core.IPickupHandler;
 import mail.core.IResupplyHandler;
@@ -121,7 +121,7 @@ public class PluginManager {
         Locale locale = Locale.getDefault();
         Locale.setDefault(Locale.ENGLISH);
 
-        Configuration config = new Configuration(new File(BungeeMail.instance.getConfigFolder(), PLUGIN_CONFIG_FILE_NAME));
+        Configuration config = new Configuration(new File(Mail.instance.getConfigFolder(), PLUGIN_CONFIG_FILE_NAME));
 
         config.load();
         config.addCustomCategoryComment(CATEGORY_PLUGINS, "Disabling these plugins can greatly change how the mod functions.\n"

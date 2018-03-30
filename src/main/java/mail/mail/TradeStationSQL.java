@@ -12,7 +12,6 @@ package mail.mail;
 
 import com.mojang.authlib.GameProfile;
 import mail.api.mail.*;
-import mail.core.inventory.IInventoryAdapter;
 import mail.core.inventory.InventoryAdapter;
 import mail.core.utils.*;
 import mail.mail.inventory.InventoryTradeStation;
@@ -26,15 +25,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,8 +46,8 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
     private PreparedStatement saveStatement;
     private PreparedStatement deleteQuery;
 
-    public TradeStationSQL(Connection connection, GameProfile owner, IMailAddress address) throws SQLException {
-        super(TABLE_NAME_TRADE_STATION, SAVE_NAME + address, connection, false);
+    public TradeStationSQL( GameProfile owner, IMailAddress address) throws SQLException {
+        super(TABLE_NAME_TRADE_STATION, SAVE_NAME + address, false);
         if (address.getType() != EnumAddressee.TRADER) {
             throw new IllegalArgumentException("TABLE_NAME_TRADE_STATION address must be a trader");
         }
@@ -62,8 +57,8 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
 
     }
 
-    public TradeStationSQL(Connection connection, IMailAddress address) throws SQLException {
-        super(TABLE_NAME_TRADE_STATION, SAVE_NAME + address, connection);
+    public TradeStationSQL( IMailAddress address) throws SQLException {
+        super(TABLE_NAME_TRADE_STATION,SAVE_NAME + address);
         this.address = address;
 
         try {
@@ -76,29 +71,32 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
 
     @Override
     public void load() throws SQLException {
+        ConnectionHandler.verifyConnection();
         isInvalid = true;
-        ResultSet resultSet = loadStatement.executeQuery();
+        try (ResultSet resultSet = loadStatement.executeQuery()) {
 
-        if (resultSet.next()) {
-            owner = new GameProfile(UUID.fromString(resultSet.getString("UUID")), resultSet.getString("Name"));
-            isVirtual = resultSet.getBoolean("Virtual");
-            isInvalid = resultSet.getBoolean("Invalid");
-            InputStream inventory = resultSet.getBinaryStream("Inventory");
-            NBTTagCompound nbtTagCompound;
-            try {
-                nbtTagCompound = CompressedStreamTools.readCompressed(inventory);
+            if (resultSet.next()) {
+                owner = new GameProfile(UUID.fromString(resultSet.getString("UUID")), resultSet.getString("Name"));
+                isVirtual = resultSet.getBoolean("Virtual");
+                isInvalid = resultSet.getBoolean("Invalid");
+                InputStream inventory = resultSet.getBinaryStream("Inventory");
+                NBTTagCompound nbtTagCompound;
+                try {
+                    nbtTagCompound = CompressedStreamTools.readCompressed(inventory);
 
-                this.inventory.readFromNBT(nbtTagCompound);
-            } catch (IOException e) {
-                e.printStackTrace();
+                    this.inventory.readFromNBT(nbtTagCompound);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                Log.warning("Else Block reached Load TradeStation");
             }
-
-        } else {
-            Log.warning("Else Block reached Load TradeStation");
         }
     }
 
     public void delete() {
+        ConnectionHandler.verifyConnection();
         try {
             deleteQuery.execute();
         } catch (SQLException e) {
@@ -113,6 +111,7 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
 
     @Override
     public void save() throws SQLException {
+        ConnectionHandler.verifyConnection();
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         inventory.writeToNBT(nbttagcompound);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -141,15 +140,15 @@ public class TradeStationSQL extends SQLSavedData implements ITradeStation {
     @Override
     protected void setupStatements() throws SQLException {
         String loadQuery = "SELECT Name, `UUID`, `Virtual`, `Invalid` , `Inventory` FROM " + tableName + " WHERE ID = '" + key + "';";
-        loadStatement = connection.prepareStatement(loadQuery);
+        loadStatement = ConnectionHandler.getPreparedStatement(loadQuery);
         String saveQuery = "REPLACE into " + tableName + " (`ID`, `Address`, `Name`, `UUID`, `Virtual`, `Invalid`, `Inventory`) VALUES " +
                 "(?,?,?,?,?,?,?);";
-        saveStatement = connection.prepareStatement(saveQuery);
+        saveStatement = ConnectionHandler.getPreparedStatement(saveQuery);
 
-        deleteQuery = connection.prepareStatement("DELETE FROM " + tableName + " WHERE ID = '" + key + "'");
+        deleteQuery = ConnectionHandler.getPreparedStatement("DELETE FROM " + tableName + " WHERE ID = '" + key + "'");
     }
     //	@SuppressWarnings("unused") // required for WorldSavedData
-//	public TradeStationSQL(Connection connection,String savename) {
+//	public TradeStationSQL(Connection connectionHolder,String savename) {
 //		super(savename);
 //	}
 

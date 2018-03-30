@@ -35,7 +35,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nullable;
-import java.sql.Connection;
 
 @MailPlugin(pluginID = ForestryPluginUids.MAIL, name = "Mail", author = "SirSengir, Lord Joda", unlocalizedDescription = "for.plugin.mail.description")
 public class PluginMail extends BlankForestryPlugin {
@@ -57,10 +56,10 @@ public class PluginMail extends BlankForestryPlugin {
     @Override
     public void setupAPI() {
 //		PostManager.postRegistry = new PostRegistry();
-        Connection connection = ConnectionHandler.initConnection();
-        if (null != connection) {
+
+        if (ConnectionHandler.isInitSucessfull()) {
         Log.info("Using SQL Mail");
-            PostManager.postRegistry = new PostRegistrySQL(connection);
+            PostManager.postRegistry = new PostRegistrySQL();
         } else {
             Log.info("Using default Mail");
             PostManager.postRegistry = new PostRegistry();

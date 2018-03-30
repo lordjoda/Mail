@@ -26,24 +26,21 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nullable;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PostRegistrySQL implements IPostRegistry {
-    private static Connection connection;
     //    @Nullable
     public PostOfficeSQL cachedPostOffice;
     public final Map<IMailAddress, POBoxSQL> cachedPOBoxes = new HashMap<>();
     public final Map<IMailAddress, TradeStationSQL> cachedTradeStations = new HashMap<>();
     private int tick = 0;
 
-    public PostRegistrySQL(Connection connection) {
+    public PostRegistrySQL() {
         MinecraftForge.EVENT_BUS.register(this);
 
-        this.connection = connection;
     }
 
     @SubscribeEvent
@@ -51,24 +48,20 @@ public class PostRegistrySQL implements IPostRegistry {
         if (event.phase == TickEvent.Phase.START) {
             tick++;
             if (tick % Config.ticksForUpdate == 0) {
-            tick = 0;
+                tick = 0;
                 //update stuff
                 cachedPOBoxes.forEach((iMailAddress, poBoxSQL) -> {
                     try {
-                        try {
-                            poBoxSQL.load();
-                        }
-                        catch (SQLException e){
-                            Log.warning("Load Failed. Reconnect?",e);
-                            poBoxSQL.load();
-                        }
+
+                        poBoxSQL.load();
+
                         EntityPlayer player = PlayerUtil.getPlayer(poBoxSQL.getWorld(), iMailAddress.getPlayerProfile());
                         if (player != null) {
                             NetworkUtil.sendToPlayer(new PacketPOBoxInfoResponse(poBoxSQL.getPOBoxInfo()), player);
                         }
                     } catch (SQLException e) {
 
-                        Log.error(e.getLocalizedMessage(),e);
+                        Log.error(e.getLocalizedMessage(), e);
 
                     }
                 });
@@ -98,12 +91,11 @@ public class PostRegistrySQL implements IPostRegistry {
         }
         POBoxSQL pobox = null;
         try {
-            pobox = new POBoxSQL(connection, address,world);
+            pobox = new POBoxSQL(address, world);
             cachedPOBoxes.put(address, pobox);
         } catch (SQLException e) {
-            Log.error(e.getLocalizedMessage(),e);
+            Log.error(e.getLocalizedMessage(), e);
         }
-
 
 
         return pobox;
@@ -111,16 +103,19 @@ public class PostRegistrySQL implements IPostRegistry {
 
     @Override
     public void clearPostOffice() {
+        ConnectionHandler.removeListener(cachedPostOffice);
         cachedPostOffice = null;
     }
 
     @Override
     public void clearPoBoxes() {
+        cachedPOBoxes.forEach((iMailAddress, poBoxSQL) -> ConnectionHandler.removeListener(poBoxSQL));
         cachedPOBoxes.clear();
     }
 
     @Override
     public void clearTradeStations() {
+        cachedTradeStations.forEach((iMailAddress, tradeStationSQL) -> ConnectionHandler.removeListener(tradeStationSQL));
         cachedTradeStations.clear();
     }
 
@@ -131,14 +126,14 @@ public class PostRegistrySQL implements IPostRegistry {
 
         if (pobox == null) {
             try {
-                pobox = new POBoxSQL(connection, address, world);
+                pobox = new POBoxSQL(address, world);
                 pobox.markDirty();
                 EntityPlayer player = PlayerUtil.getPlayer(world, address.getPlayerProfile());
                 if (player != null) {
                     NetworkUtil.sendToPlayer(new PacketPOBoxInfoResponse(pobox.getPOBoxInfo()), player);
                 }
             } catch (SQLException e) {
-                Log.error(e.getLocalizedMessage(),e);
+                Log.error(e.getLocalizedMessage(), e);
 
             }
         }
@@ -177,7 +172,7 @@ public class PostRegistrySQL implements IPostRegistry {
 
         TradeStationSQL trade = null;
         try {
-            trade = new TradeStationSQL(connection, address);
+            trade = new TradeStationSQL(address);
         } catch (SQLException e) {
             Log.error(e.getLocalizedMessage());
         }
@@ -197,12 +192,12 @@ public class PostRegistrySQL implements IPostRegistry {
 
         if (trade == null) {
             try {
-                trade = new TradeStationSQL(connection, owner, address);
+                trade = new TradeStationSQL(owner, address);
                 trade.markDirty();
                 cachedTradeStations.put(address, trade);
                 getPostOffice(world).registerTradeStation(trade);
             } catch (SQLException e) {
-                Log.error(e.getLocalizedMessage(),e);
+                Log.error(e.getLocalizedMessage(), e);
             }
         }
 
@@ -232,9 +227,9 @@ public class PostRegistrySQL implements IPostRegistry {
 //        PostOffice office = (PostOffice) world.loadData(PostOffice.class, PostOffice.SAVE_NAME);
         PostOfficeSQL office = null;
         try {
-            office = new PostOfficeSQL(connection);
+            office = new PostOfficeSQL();
         } catch (SQLException e) {
-            Log.error(e.getLocalizedMessage(),e);
+            Log.error(e.getLocalizedMessage(), e);
         }
 //            world.setData(PostOffice.SAVE_NAME, office);
 

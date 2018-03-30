@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 
 /**
- * BungeeMail Minecraft Mod
+ * Mail Minecraft Mod
  *
  * @author SirSengir
  */
@@ -46,15 +46,15 @@ import java.io.File;
 		acceptedMinecraftVersions = "[1.11]",
 		dependencies = "required-after:forge@[13.20.0.2270,);"
 				+ "after:jei@[4.5.0,);")
-public class BungeeMail {
+public class Mail {
 
 	@SuppressWarnings("NullableProblems")
 	@Mod.Instance(Constants.MOD_ID)
-	public static BungeeMail instance;
+	public static Mail instance;
 	@Nullable
 	private File configFolder;
 
-	public BungeeMail() {
+	public Mail() {
 		MailAPI.instance = this;
 		MailAPI.mailConstants = new Constants();
 		MailAPI.errorStateRegistry = new ErrorStateRegistry();

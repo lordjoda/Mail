@@ -18,7 +18,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,8 +34,8 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
     private PreparedStatement getTradeStationQuery;
 
     // CONSTRUCTORS
-    public PostOfficeSQL(Connection connection) throws SQLException {
-        super("PostOffice", SAVE_NAME, connection);
+    public PostOfficeSQL() throws SQLException {
+        super("PostOffice", SAVE_NAME);
         try {
             load();
         } catch (SQLException e) {
@@ -52,8 +51,8 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
     }
 
     @SuppressWarnings("unused")
-//	public PostOfficeSQL(Connection connection,String s) {
-//		super("PostOfficeSQL",s,connection);
+//	public PostOfficeSQL(Connection connectionHolder,String s) {
+//		super("PostOfficeSQL",s,connectionHolder);
 //	}
 
     public void setWorld(World world) {
@@ -63,7 +62,7 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
     protected void setupStatements() throws SQLException {
 
         String query = "SELECT ID, Value FROM " + tableName;
-        loadStatement = connection.prepareStatement(query);
+        loadStatement = ConnectionHandler.getPreparedStatement(query);
         String saveQuery = "REPLACE into " + tableName + " (ID,Value) VALUES ";
         for (int i = 0; i < EnumPostage.values().length; i++) {
             saveQuery += "(" + i + ",?), ";
@@ -71,27 +70,29 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
         if (saveQuery.endsWith(", ")) {
             saveQuery = saveQuery.substring(0, saveQuery.length() - ", ".length());
         }
-        saveStatement = connection.prepareStatement(saveQuery);
+        saveStatement = ConnectionHandler.getPreparedStatement(saveQuery);
         String tradeStationQuery = "SELECT Address FROM " + TradeStationSQL.TABLE_NAME_TRADE_STATION + ";";
-        getTradeStationQuery = connection.prepareStatement(tradeStationQuery);
+        getTradeStationQuery = ConnectionHandler.getPreparedStatement(tradeStationQuery);
 
     }
 
     public void load() throws SQLException {
 
-
-        ResultSet resultSet = loadStatement.executeQuery();
-        while (resultSet.next()) {
-            int id = resultSet.getInt("ID");
-            int value = resultSet.getInt("Value");
-            if (EnumPostage.values().length > id) {
-                collectedPostage[id] = value;
+        ConnectionHandler.verifyConnection();
+        try (ResultSet resultSet = loadStatement.executeQuery()) {
+            while (resultSet.next()) {
+                int id = resultSet.getInt("ID");
+                int value = resultSet.getInt("Value");
+                if (EnumPostage.values().length > id) {
+                    collectedPostage[id] = value;
+                }
             }
+            resultSet.close();
         }
-        resultSet.close();
     }
 
     public void save() throws SQLException {
+        ConnectionHandler.verifyConnection();
         for (int i = 0; i < collectedPostage.length; i++) {
             saveStatement.setInt(i + 1, collectedPostage[i]);
         }
@@ -125,26 +126,23 @@ public class PostOfficeSQL extends SQLSavedData implements IPostOffice {
     }
 
     private void refreshActiveTradeStations(World world) {
+        ConnectionHandler.verifyConnection();
         activeTradeStations = new LinkedHashMap<>();
         try {
 
 
-            ResultSet resultSet;
-            try {
-                resultSet = getTradeStationQuery.executeQuery();
-            } catch (SQLException e) {
-                Log.warning("ExecuteFailed. Reconnect?", e);
-                resultSet = getTradeStationQuery.executeQuery();
-            }
-            while (resultSet.next()) {
+            try (ResultSet resultSet = getTradeStationQuery.executeQuery()) {
 
-                MailAddress address = new MailAddress(SQLSavedData.readFormStatement(resultSet, "Address"));
-                ITradeStation trade = PostManager.postRegistry.getTradeStation(world, address);
-                if (trade == null) {
-                    continue;
+                while (resultSet.next()) {
+
+                    MailAddress address = new MailAddress(SQLSavedData.readFormStatement(resultSet, "Address"));
+                    ITradeStation trade = PostManager.postRegistry.getTradeStation(world, address);
+                    if (trade == null) {
+                        continue;
+                    }
+
+                    registerTradeStation(trade);
                 }
-
-                registerTradeStation(trade);
             }
         } catch (IOException | SQLException e) {
             Log.error(e.getLocalizedMessage());

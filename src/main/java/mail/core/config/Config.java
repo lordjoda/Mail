@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
 
+import mail.Mail;
 import net.minecraftforge.common.config.Property;
 
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -30,7 +31,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import mail.BungeeMail;
 import mail.core.utils.Log;
 import mail.core.utils.Translator;
 import mail.mail.gui.GuiMailboxInfo;
@@ -52,7 +52,8 @@ public class Config {
 	// Mail
 	public enum MailMode{
 		None,
-		MYSql
+		MYSql,
+		MARIA
 	}
 	public static boolean mailAlertEnabled = true;
 	public static GuiMailboxInfo.XPosition mailAlertXPosition = GuiMailboxInfo.XPosition.LEFT;
@@ -77,7 +78,7 @@ public class Config {
 
 
 	public static void load(Side side) {
-		File configCommonFile = new File(BungeeMail.instance.getConfigFolder(), CATEGORY_COMMON + ".cfg");
+		File configCommonFile = new File(Mail.instance.getConfigFolder(), CATEGORY_COMMON + ".cfg");
 		configCommon = new LocalizedConfiguration(configCommonFile, "1.2.0");
 		loadConfigCommon(side);
 
@@ -151,7 +152,7 @@ public class Config {
 
 	private static void CopyFileToFS(File destination, String resourcePath) {
 		InputStream stream = Config.class.getResourceAsStream(resourcePath);
-		OutputStream outstream;
+		OutputStream outstream =null;
 		int readBytes;
 		byte[] buffer = new byte[4096];
 		try {
@@ -172,6 +173,15 @@ public class Config {
 			Log.error("File not found.", e);
 		} catch (IOException e) {
 			Log.error("Failed to copy file.", e);
+		}
+		finally {
+			if(outstream != null){
+				try {
+					outstream.close();
+				} catch (IOException ignore) {
+
+				}
+			}
 		}
 	}
 

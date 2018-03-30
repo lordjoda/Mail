@@ -26,7 +26,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,8 +41,8 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
     private final InventoryAdapter letters;
     private PreparedStatement saveStatement;
 
-    public POBoxSQL(Connection connection, IMailAddress address, World world) throws SQLException {
-        super("POBox", SAVE_NAME + address, connection);
+    public POBoxSQL(IMailAddress address, World world) throws SQLException {
+        super("POBox", SAVE_NAME + address);
         this.world = world;
         if (address.getType() != EnumAddressee.PLAYER) {
             throw new IllegalArgumentException("POBox address must be a player");
@@ -70,48 +69,49 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
 
     @Override
     protected void setupStatements() throws SQLException {
-        loadStatement = connection.prepareStatement("SELECT Address ,Inventory FROM " + tableName + " WHERE ID ='" + key + "';");
-        saveStatement = connection.prepareStatement("REPLACE INTO  " + tableName + " (ID, Address, Inventory) VALUES (?,?,?);");
+        loadStatement = ConnectionHandler.getPreparedStatement("SELECT Address ,Inventory FROM " + tableName + " WHERE ID ='" + key + "';");
+        saveStatement = ConnectionHandler.getPreparedStatement("REPLACE INTO  " + tableName + " (ID, Address, Inventory) VALUES (?,?,?);");
     }
 
     @Override
     public void load() throws SQLException {
-        ResultSet resultSet = loadStatement.executeQuery();
-        if (resultSet.next()) {
+        ConnectionHandler.verifyConnection();
+        try (ResultSet resultSet = loadStatement.executeQuery()) {
+            if (resultSet.next()) {
 
-            try {
-                letters.clear();
-                this.address = new MailAddress(readFormStatement(resultSet, "Address"));
-                this.letters.readFromNBT(readFormStatement(resultSet, "Inventory"));
-            } catch (IOException e) {
-                Log.error(e.getLocalizedMessage(),e);
+                try {
+                    letters.clear();
+                    this.address = new MailAddress(readFormStatement(resultSet, "Address"));
+                    this.letters.readFromNBT(readFormStatement(resultSet, "Inventory"));
+                } catch (IOException e) {
+                    Log.error(e.getLocalizedMessage(), e);
 
+                }
+
+            } else {
+                Log.warning("Else Block Reached");
+                //??
             }
-
-        } else {
-            Log.warning("Else Block Reached");
-            //??
         }
-        resultSet.close();
     }
 
     @Override
     public void save() throws SQLException {
-
+        ConnectionHandler.verifyConnection();
         saveStatement.setString(1, key);
         try {
             writeToStatement(address, saveStatement, 2);
             writeToStatement(letters, saveStatement, 3);
             saveStatement.execute();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.error(e.getLocalizedMessage(), e);
         }
     }
     //
 //    @Override
 //    public void readFromNBT(NBTTagCompound nbttagcompound) {
 //        if (nbttagcompound.hasKey("address")) {
-//            this.address = new MailAddressSQL(connection);
+//            this.address = new MailAddressSQL(connectionHolder);
 //        }
 //        letters.readFromNBT(nbttagcompound);
 //    }
@@ -135,11 +135,11 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
         try {
             load();
         } catch (SQLException e) {
-            Log.warning("Save Failed. Reconnect?",e);
+            Log.warning("Save Failed. Reconnect?", e);
             try {
                 load();
             } catch (SQLException e1) {
-                Log.error(e1.getLocalizedMessage(),e1);
+                Log.error(e1.getLocalizedMessage(), e1);
             }
         }
         // Mark letter as processed
@@ -191,11 +191,11 @@ public class POBoxSQL extends SQLSavedData implements IPOBox {
         try {
             save();
         } catch (SQLException e) {
-            Log.warning("Save Failed. Reconnect?",e);
+            Log.warning("Save Failed. Reconnect?", e);
             try {
                 save();
             } catch (SQLException e1) {
-                Log.error(e1.getLocalizedMessage(),e1);
+                Log.error(e1.getLocalizedMessage(), e1);
             }
 
         }
