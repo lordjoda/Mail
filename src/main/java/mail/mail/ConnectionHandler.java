@@ -14,7 +14,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
- * Created by Johannes Lohrer <lohrer@dbs.ifi.lmu.de> on 11.10.2017.
+ * Created by lordjoda <lordjoda@gmail.com> on 11.10.2017.
  */
 public class ConnectionHandler {
 

@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by Johannes Lohrer <lohrer@dbs.ifi.lmu.de> on 03.10.2017.
+ * Created by lordjoda <lordjoda@gmail.com> on 03.10.2017.
  */
 public abstract class SQLSavedData {
 
